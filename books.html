@@ -1,0 +1,387 @@
+<html>
+<head>
+<title>
+Amazon</title>
+</head>
+<style>
+input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+div {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+</style>
+<body bgcolor="#ffffff">
+<div>
+<form method="post" action="login.html" target=_blank ><center>
+
+<h1>Welcome to Online Shopping</h1><center>
+<h4>for books</h4><center>
+<!-- <input type="submit" class="button" type="button" value="click here"> -->
+<button type="submit" class="button" type="button">click here</button>
+</form>
+</div>
+</center>
+</body>
+</html>
+
+
+<!-- Payment.html -->
+
+<!-- <html>
+<head><title>payment</title></head>
+<style>
+
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+</style>
+
+<body bgcolor="#ffffff">
+<center><h1>Payment By Credit Card</h1></center>
+<form method=post action="ordrconform.html">
+<br><br><br><br><br>
+<table align="center">
+<tr>
+<td>
+<h4>Total Amount</h4></td>
+<td><input type="text">
+</td>
+</tr>
+<tr>
+<td><h4>Credit Card Number</td>
+<td><input type="text"></td>
+</tr>
+<tr>
+<td>
+</td>
+<td><button type="submit" onclick="alert('Thank You ! Your Order Is Confirm')" formaction="ordrconform.html" class="button" type="button">OK</button>
+</td>
+</tr>
+</table>
+</form>
+</body>
+</html> -->
+
+<!-- Shopping.html -->
+<!-- <html>
+<head><title>shopping cart</title>
+</head>
+<style>
+
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+</style>
+<body bgcolor="#ffffff">
+<center><h1>
+Shopping Cart</h1></center>
+<br><br><br><br><br>
+<table align="center">
+<tr>
+<td>Text Books</td>
+<td>
+<select >
+<optgroup label="select the book">
+<option value="C&Ds">C&Ds
+<option value="Ads">Ads
+<option value="Java">Java
+<option value="Oracle">Oracle
+<option value="Ms SQL Server">Ms SQL Server
+<option value="MySql">MySql
+</optgroup>
+</select>
+</td></tr>
+<tr>
+<td>
+Quantity</td>
+<td>
+<input type="text" id="q">
+</td></tr>
+<tr>
+<td></td>
+<td>
+<form method=post action="payment.html">
+<button type="submit" formaction="payment.html" class="button" type="button">Submit</button>
+</form>
+</td></tr>
+</table>
+<center>
+<pre>Cost of one book is"500" + shipping "100"</pre>
+</center>
+<body>
+</html>
+ -->
+
+<!--  Userpro.html -->
+
+<!-- <html>
+<head>
+<title>
+login page</title>
+</head>
+<style>
+input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+div {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+</style>
+<body bgcolor="#f4f4f6">
+<div>
+  <form action="/action_page.php">
+  	<center><h1> Online Shopping  Nmart</h1></center>
+    <label for="fname">user name</label>
+    <input type="text" id="fname" name="firstname" placeholder="Your name.." required>
+
+    <label for="lname">password</label>
+    <input type="text" id="lname" name="lastname" placeholder="password" required>
+
+    <label for="lname">Confirm password</label>
+    <input type="text" id="lname" name="lastname" placeholder="Confirm password" required>
+
+    <label for="lname">male</label>
+    <input type="radio" name="sex" id="male" ><br>
+
+    <label for="lname">female</label>
+    <input type="radio" name="sex" id="female" ><br>
+
+    <label for="lname">Address</label>
+    <textarea name="address" rows=5 cols=19></textarea>
+
+    <button type="submit" formaction="catalog.html" class="button" type="button">Submit</button>
+
+  
+  </form>
+</div>
+</body>
+</html> -->
+
+<!-- Catalog.html -->
+
+<!-- <html>
+<head>
+<title>
+books catalog</title>
+</head>
+<style>
+
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+</style>
+<body bgcolor="#ffffff">
+<center><h1>Nmart</h1></center>
+<form method="post" action="shopping.html">
+<left>
+<table>
+<tr>
+<td><b><h3>frontend books</td>
+<td></td></tr>
+<tr>
+<td></td>
+<td><h4>C&Ds</td>
+</tr>
+<tr>
+<td></td>
+<td><h4>Ads</td>
+</tr>
+<tr>
+<td></td>
+<td><h4>JAVA
+</td></tr>
+<tr>
+<td><b><h3>backend books</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><h4>Oracle</td>
+</tr>
+<tr>
+<td></td>
+<td><h4>Ms SQL Server
+</td></tr>
+<tr>
+<td></td>
+<td><h4>MySql </td>
+</tr>
+</table>
+</h4>
+<center>
+<b>for buy one of these books
+<br>
+</b><button type="submit" formaction="shopping.html" class="button" type="button">Next</button>
+</center>
+</form>
+</body>
+</html> -->
+
+<!-- Login.html -->
+<!-- <html>
+<head>
+<title>
+login page</title>
+</head>
+<style>
+input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+div {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+.button1 {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+.button2 {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+</style>
+<body bgcolor="#f4f4f6">
+<div>
+  <form action="/action_page.php">
+  	<center><h1> Online Shopping  Nmart</h1></center>
+    <label for="fname">user name</label>
+    <input type="text" id="fname" name="firstname" placeholder="Your name.." required>
+
+    <label for="lname">password</label>
+    <input type="text" id="lname" name="lastname" placeholder="Your last name.." required><center>
+  
+
+  <button type="submit" formaction="catalog.html" class="button1" type="button">Log In</button>
+  <button type="submit" formaction="userpro.html" class="button2" type="button">Register</button>
+  
+  </form>
+</div>
+</body>
+</html>
+ -->
+

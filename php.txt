@@ -1,0 +1,865 @@
+
+.......................................database.............................
+
+    CREATE TABLE users (
+
+        id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+
+        username VARCHAR(50) NOT NULL UNIQUE,
+
+        password VARCHAR(255) NOT NULL,
+
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+
+    );
+
+..............................................................................
+
+.........................................config.php
+
+
+    <?php
+
+    /* Database credentials. Assuming you are running MySQL
+
+    server with default setting (user 'root' with no password) */
+
+    define('DB_SERVER', 'localhost');
+
+    define('DB_USERNAME', 'root');
+
+    define('DB_PASSWORD', '');
+
+    define('DB_NAME', 'demo');
+
+     
+
+    /* Attempt to connect to MySQL database */
+
+    $link = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+     
+
+    // Check connection
+
+    if($link === false){
+
+        die("ERROR: Could not connect. " . mysqli_connect_error());
+
+    }
+
+    ?>
+
+.......................................................................................
+........................................register.php
+
+
+
+    <?php
+
+    // Include config file
+
+    require_once 'config.php';
+
+     
+
+    // Define variables and initialize with empty values
+
+    $username = $password = $confirm_password = "";
+
+    $username_err = $password_err = $confirm_password_err = "";
+
+     
+
+    // Processing form data when form is submitted
+
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+     
+
+        // Validate username
+
+        if(empty(trim($_POST["username"]))){
+
+            $username_err = "Please enter a username.";
+
+        } else{
+
+            // Prepare a select statement
+
+            $sql = "SELECT id FROM users WHERE username = ?";
+
+            
+
+            if($stmt = mysqli_prepare($link, $sql)){
+
+                // Bind variables to the prepared statement as parameters
+
+                mysqli_stmt_bind_param($stmt, "s", $param_username);
+
+                
+
+                // Set parameters
+
+                $param_username = trim($_POST["username"]);
+
+                
+
+                // Attempt to execute the prepared statement
+
+                if(mysqli_stmt_execute($stmt)){
+
+                    /* store result */
+
+                    mysqli_stmt_store_result($stmt);
+
+                    
+
+                    if(mysqli_stmt_num_rows($stmt) == 1){
+
+                        $username_err = "This username is already taken.";
+
+                    } else{
+
+                        $username = trim($_POST["username"]);
+
+                    }
+
+                } else{
+
+                    echo "Oops! Something went wrong. Please try again later.";
+
+                }
+
+            }
+
+             
+
+            // Close statement
+
+            mysqli_stmt_close($stmt);
+
+        }
+
+        
+
+        // Validate password
+
+        if(empty(trim($_POST['password']))){
+
+            $password_err = "Please enter a password.";     
+
+        } elseif(strlen(trim($_POST['password'])) < 6){
+
+            $password_err = "Password must have atleast 6 characters.";
+
+        } else{
+
+            $password = trim($_POST['password']);
+
+        }
+
+        
+
+        // Validate confirm password
+
+        if(empty(trim($_POST["confirm_password"]))){
+
+            $confirm_password_err = 'Please confirm password.';     
+
+        } else{
+
+            $confirm_password = trim($_POST['confirm_password']);
+
+            if($password != $confirm_password){
+
+                $confirm_password_err = 'Password did not match.';
+
+            }
+
+        }
+
+        
+
+        // Check input errors before inserting in database
+
+        if(empty($username_err) && empty($password_err) && empty($confirm_password_err)){
+
+            
+
+            // Prepare an insert statement
+
+            $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+
+             
+
+            if($stmt = mysqli_prepare($link, $sql)){
+
+                // Bind variables to the prepared statement as parameters
+
+                mysqli_stmt_bind_param($stmt, "ss", $param_username, $param_password);
+
+                
+
+                // Set parameters
+
+                $param_username = $username;
+
+                $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
+
+                
+
+                // Attempt to execute the prepared statement
+
+                if(mysqli_stmt_execute($stmt)){
+
+                    // Redirect to login page
+
+                    header("location: login.php");
+
+                } else{
+
+                    echo "Something went wrong. Please try again later.";
+
+                }
+
+            }
+
+             
+
+            // Close statement
+
+            mysqli_stmt_close($stmt);
+
+        }
+
+        
+
+        // Close connection
+
+        mysqli_close($link);
+
+    }
+
+    ?>
+
+     
+
+    <!DOCTYPE html>
+
+    <html lang="en">
+
+    <head>
+
+        <meta charset="UTF-8">
+
+        <title>Sign Up</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
+
+        <style type="text/css">
+
+            body{ font: 14px sans-serif; }
+
+            .wrapper{ width: 350px; padding: 20px; }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div class="wrapper">
+
+            <h2>Sign Up</h2>
+
+            <p>Please fill this form to create an account.</p>
+
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+
+                <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
+
+                    <label>Username</label>
+
+                    <input type="text" name="username"class="form-control" value="<?php echo $username; ?>">
+
+                    <span class="help-block"><?php echo $username_err; ?></span>
+
+                </div>    
+
+                <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
+
+                    <label>Password</label>
+
+                    <input type="password" name="password" class="form-control" value="<?php echo $password; ?>">
+
+                    <span class="help-block"><?php echo $password_err; ?></span>
+
+                </div>
+
+                <div class="form-group <?php echo (!empty($confirm_password_err)) ? 'has-error' : ''; ?>">
+
+                    <label>Confirm Password</label>
+
+                    <input type="password" name="confirm_password" class="form-control" value="<?php echo $confirm_password; ?>">
+
+                    <span class="help-block"><?php echo $confirm_password_err; ?></span>
+
+                </div>
+
+                <div class="form-group">
+
+                    <input type="submit" class="btn btn-primary" value="Submit">
+
+                    <input type="reset" class="btn btn-default" value="Reset">
+
+                </div>
+
+                <p>Already have an account? <a href="login.php">Login here</a>.</p>
+
+            </form>
+
+        </div>    
+
+    </body>
+
+    </html>
+
+.................................................................................................
+.............................................login.php
+
+
+    <?php
+
+    // Include config file
+
+    require_once 'config.php';
+
+     
+
+    // Define variables and initialize with empty values
+
+    $username = $password = "";
+
+    $username_err = $password_err = "";
+
+     
+
+    // Processing form data when form is submitted
+
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+     
+
+        // Check if username is empty
+
+        if(empty(trim($_POST["username"]))){
+
+            $username_err = 'Please enter username.';
+
+        } else{
+
+            $username = trim($_POST["username"]);
+
+        }
+
+        
+
+        // Check if password is empty
+
+        if(empty(trim($_POST['password']))){
+
+            $password_err = 'Please enter your password.';
+
+        } else{
+
+            $password = trim($_POST['password']);
+
+        }
+
+        
+
+        // Validate credentials
+
+        if(empty($username_err) && empty($password_err)){
+
+            // Prepare a select statement
+
+            $sql = "SELECT username, password FROM users WHERE username = ?";
+
+            
+
+            if($stmt = mysqli_prepare($link, $sql)){
+
+                // Bind variables to the prepared statement as parameters
+
+                mysqli_stmt_bind_param($stmt, "s", $param_username);
+
+                
+
+                // Set parameters
+
+                $param_username = $username;
+
+                
+
+                // Attempt to execute the prepared statement
+
+                if(mysqli_stmt_execute($stmt)){
+
+                    // Store result
+
+                    mysqli_stmt_store_result($stmt);
+
+                    
+
+                    // Check if username exists, if yes then verify password
+
+                    if(mysqli_stmt_num_rows($stmt) == 1){                    
+
+                        // Bind result variables
+
+                        mysqli_stmt_bind_result($stmt, $username, $hashed_password);
+
+                        if(mysqli_stmt_fetch($stmt)){
+
+                            if(password_verify($password, $hashed_password)){
+
+                                /* Password is correct, so start a new session and
+
+                                save the username to the session */
+
+                                session_start();
+
+                                $_SESSION['username'] = $username;      
+
+                                header("location: welcome.php");
+
+                            } else{
+
+                                // Display an error message if password is not valid
+
+                                $password_err = 'The password you entered was not valid.';
+
+                            }
+
+                        }
+
+                    } else{
+
+                        // Display an error message if username doesn't exist
+
+                        $username_err = 'No account found with that username.';
+
+                    }
+
+                } else{
+
+                    echo "Oops! Something went wrong. Please try again later.";
+
+                }
+
+            }
+
+            
+
+            // Close statement
+
+            mysqli_stmt_close($stmt);
+
+        }
+
+        
+
+        // Close connection
+
+        mysqli_close($link);
+
+    }
+
+    ?>
+
+     
+
+    <!DOCTYPE html>
+
+    <html lang="en">
+
+    <head>
+
+        <meta charset="UTF-8">
+
+        <title>Login</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
+
+        <style type="text/css">
+
+            body{ font: 14px sans-serif; }
+
+            .wrapper{ width: 350px; padding: 20px; }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div class="wrapper">
+
+            <h2>Login</h2>
+
+            <p>Please fill in your credentials to login.</p>
+
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+
+                <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
+
+                    <label>Username</label>
+
+                    <input type="text" name="username"class="form-control" value="<?php echo $username; ?>">
+
+                    <span class="help-block"><?php echo $username_err; ?></span>
+
+                </div>    
+
+                <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
+
+                    <label>Password</label>
+
+                    <input type="password" name="password" class="form-control">
+
+                    <span class="help-block"><?php echo $password_err; ?></span>
+
+                </div>
+
+                <div class="form-group">
+
+                    <input type="submit" class="btn btn-primary" value="Login">
+
+                </div>
+
+                <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
+
+            </form>
+
+        </div>    
+
+    </body>
+
+    </html>
+
+...................................................................................................
+..............................................welcome.php
+<?php
+
+// Initialize the session
+
+session_start();
+
+ 
+
+// If session variable is not set it will redirect to login page
+
+if(!isset($_SESSION['username']) || empty($_SESSION['username'])){
+
+  header("location: login.php");
+
+  exit;
+
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Login Example</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet">
+ <!--    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"> -->
+   
+
+</head>
+   
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Navbar</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation" style="">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor03">
+    <ul class="navbar-nav mr-auto">
+      <li>
+        <a class="nav-link" href="#"><?php echo $_SESSION['username'];?></a>
+      </li>
+      <li>
+        <a class="nav-link" href="logout.php">Logout</a>
+      </li>      
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Features</a>
+      </li>
+
+
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" placeholder="Search" type="text">
+      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+  <header>
+      <div class="row" style="background-color:#2b9ed8">
+        <div class="col-lg-12" align="center">
+          <img class="img-fluid rounded" src="img/foot.png" alt="" >
+        </div>
+      </div>
+
+    </header>
+
+<div class="jumbotron jumbotron-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-lg-12">
+                <h1 class="h1">
+                    Our Services</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+        <div class="col-lg-4 mb-4">
+          <div class="card h-100">
+            <h4 class="card-header">AC Service and Repair</h4>
+            <div class="card-body">
+              <!-- <p class="card-text">Problem with AC? Click Show More For Solution.</p> -->
+              <video width="320" height="240" controls>
+  <source src="aa.mp4" type="video/mp4">
+</video> 
+            </div>
+            <div class="card-footer">
+              <a href="services.php" class="btn btn-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+          <div class="card h-100">
+            <h4 class="card-header">Plumber</h4>
+            <div class="card-body">
+               <iframe width="560" height="315" src="https://www.youtube.com/embed/t5490lgtpbc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+            <div class="card-footer">
+              <a href="#" class="btn btn-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+          <div class="card h-100">
+            <h4 class="card-header">Electrician</h4>
+            <div class="card-body">
+              <audio controls>
+
+  <source src="Alan Walker - The Spectre.mp3" type="audio/mpeg">
+ 
+</audio> 
+            </div>
+            <div class="card-footer">
+              <a href="#" class="btn btn-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+<footer class="site-footer jumbotron">
+<div class="jumbotron jumbotron-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-lg-12">
+                <h1 class="h1">
+                    Contact us <small>Feel free to contact us</small></h1>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+</footer>
+
+
+<style>
+a {
+    color: #F9F8FC;
+    text-decoration: none;
+    background-color:#59319600;
+    -webkit-text-decoration-skip: objects
+}
+
+a:hover {
+    color: #F9F8FC;
+    text-decoration: underline
+}
+.btn-primary{color:#fff;background-color:#593196;border-color:#fff}
+.site-footer {
+  background: orange;
+}
+.jumbotron {
+background: #593196;
+color: #FFF;
+border-radius: 0px;
+}
+.jumbotron-sm { 
+text-align:center;
+margin-bottom: 30px;
+margin-top: 30px;
+padding-top: 24px;
+padding-bottom: 24px; }
+.jumbotron small {
+color: #FFF;
+}
+.h1 small {
+font-size: 24px;
+}
+.image-block {
+    border: 3px solid white ;
+    background-color: black;
+    padding: 0px;    
+    margin: 0px;
+    height:200px;
+    text-align: center;
+    vertical-align: bottom;
+}
+.image-block > p {
+    width: 100%;
+    height: 100%;
+    font-weight: normal;
+    font-size: 19px;
+    padding-top: 150px;
+    background-color: rgba(3,3,3,0.0);
+    color: rgba(6,6,6,0.0);
+}
+.image-block:hover > p {
+    background-color: rgba(3,3,3,0.5);    
+    color: white;    
+}
+.glyphicon { margin-right:5px; }
+.thumbnail
+{
+    margin-bottom: 20px;
+    padding: 0px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+}
+
+.item.list-group-item
+{
+    float: none;
+    width: 100%;
+    background-color: #fff;
+    margin-bottom: 10px;
+}
+.item.list-group-item:nth-of-type(odd):hover,.item.list-group-item:hover
+{
+    background: #428bca;
+}
+
+.item.list-group-item .list-group-image
+{
+    margin-right: 10px;
+}
+.item.list-group-item .thumbnail
+{
+    margin-bottom: 0px;
+}
+.item.list-group-item .caption
+{
+    padding: 9px 9px 0px 9px;
+}
+.item.list-group-item:nth-of-type(odd)
+{
+    background: #eeeeee;
+}
+
+.item.list-group-item:before, .item.list-group-item:after
+{
+    display: table;
+    content: " ";
+}
+
+.item.list-group-item img
+{
+    float: left;
+}
+.item.list-group-item:after
+{
+    clear: both;
+}
+.list-group-item-text
+{
+    margin: 0 0 11px;
+}
+
+.img {
+    width: 100%;
+    height: auto;
+}
+
+</style>
+
+
+    
+  
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
+.....................................................................................................
+.................................................logout.php
+
+
+    <?php
+
+    // Initialize the session
+
+    session_start();
+
+     
+
+    // Unset all of the session variables
+
+    $_SESSION = array();
+
+     
+
+    // Destroy the session.
+
+    session_destroy();
+
+     
+
+    // Redirect to login page
+
+    header("location: login.php");
+
+    exit;
+
+    ?>
+
